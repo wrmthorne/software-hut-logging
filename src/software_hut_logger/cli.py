@@ -208,8 +208,6 @@ def main():
     os.environ["SH_EXPERIMENT_NAME"] = args.experiment_name
     os.environ["SH_RUN_NAME"] = args.run_name
 
-
-
     if args.command == 'train':
         handle_train_command(train_args)
     elif args.command == 'upload-log':

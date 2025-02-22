@@ -4,7 +4,13 @@ A package containing the logger demo for Software Hut using Hugging Face 🤗 Tr
 
 `NOTE:` This is intended to be used with linux systems. If you are using Windows, you should use WSL2 for everything related to this package.
 
-## Installation & Setup
+## Index
+- **[Installation & Setup](#2-installation--setup)**: Instructions for setting up the environment.
+- **[Usage](#3-usage)**: How to use the software after installation.
+- **[Commands](#31-commands)**: List of available commands and their descriptions.
+- **[Metadata File Contents](#4-metadata-file-contents)**: Details about the contents of the metadata file.
+
+## 1. Installation & Setup
 
 ```bash
 # Create a virtual environment
@@ -16,7 +22,7 @@ pip install software-hut-logger
 `NOTE:` If you want to edit the code or rerun the training script for any reason, let me know and I'll add instructions.
 
 
-## Usage
+## 2. Usage
 
 If installed correctly, the package should be available as a command-line tool. 
 
@@ -32,7 +38,7 @@ software-hut-logger <command> [ --project-name <project-name> ] [ --experiment-n
 <details>
 <summary><b>EXPAND:</b> What the hell is this command description syntax?</summary>
 
-### Backus-Naur-Form-style (BNF-style) command description syntax
+#### Backus-Naur-Form-style (BNF-style) command description syntax
 
 | Command | Description |
 |---------|-------------|
@@ -41,7 +47,7 @@ software-hut-logger <command> [ --project-name <project-name> ] [ --experiment-n
 | `\|` | Logical OR (mutually exclusive) |
 
 
-#### Examples
+Examples:
 
 ```bash
 # argument1 is required
@@ -59,15 +65,13 @@ software-hut-logger <command> [ --project-name <project-name> ] [ --experiment-n
 # If argument1 is specified, then argument2 is required
 [argument1 <argument2>]
 ```
-
-
 </details>
 
-### Commands
+### 2.1 Commands
 
 There are three commands you _can_ use but only two that you'll probably need to use.
 
-#### `start-server`
+#### 2.1.1 `start-server`
 
 Starts a mock endpoint for you to explore uploading runs to. It is currently implemented with an API key -- if you chose to implement authentication in a different way, let me know and I'll add support for that.
 
@@ -80,7 +84,7 @@ Minimal Example:
 # Starts the demo-server at http://0.0.0.0:8000
 shl server start
 
-# Stops the demo-server
+# Stops the demo-server -- only needed if you started the server with the `-q` flag
 shl server stop
 ```
 
@@ -137,7 +141,7 @@ shl server stop
 
 </details>
 
-#### `upload-log`
+#### 2.1.2 `upload-log`
 
 Uploads a log file to the specified endpoint.
 
@@ -185,11 +189,11 @@ shl upload-log
 </details>
 
 
-#### `train`
+#### 2.1.3 `train`
 
 🚧 I'll add details here if you find you need to run the training script. 🚧
 
 
-## Metadata File Contents
+## 3. Metadata File Contents
 
 The metadata file contains all of the information about the run. 
