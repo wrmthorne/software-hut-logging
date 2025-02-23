@@ -14,15 +14,15 @@ def create_parser():
     parser = argparse.ArgumentParser(description='Software Hut Logger CLI')
     subparsers = parser.add_subparsers(dest='command', required=True)
 
-    # upload-log command
-    upload_log_parser = subparsers.add_parser('upload-log', help='Upload logs to the server')
-    upload_log_parser.add_argument('--run-dir', '--run_dir', dest='run_dir', type=str, default='example_log',
+    # upload-run command
+    upload_run_parser = subparsers.add_parser('upload-run', help='Upload run to the server')
+    upload_run_parser.add_argument('--run-dir', '--run_dir', dest='run_dir', type=str, default='example_run',
                                  help='Path to run directory')
-    upload_log_parser.add_argument('--api-key', '--api_key', dest='api_key', type=str, default='super-secret-api-key',
+    upload_run_parser.add_argument('--api-key', '--api_key', dest='api_key', type=str, default='super-secret-api-key',
                                  help='API key for authentication')
-    upload_log_parser.add_argument('--upload-url', '--upload_url', type=str, default='0.0.0.0',
+    upload_run_parser.add_argument('--upload-url', '--upload_url', type=str, default='0.0.0.0',
                                  help='URL or IP address of receiving server')
-    upload_log_parser.add_argument('--upload-port', '--upload_port', type=int, default=8000,
+    upload_run_parser.add_argument('--upload-port', '--upload_port', type=int, default=8000,
                                  help='Port number of receiving server')
 
     # Server command
@@ -30,7 +30,7 @@ def create_parser():
     server_subparsers = server_parser.add_subparsers(dest='server_command', required=True)
     
     server_parser.add_argument('--pid-file', '--pid_file', dest='pid_file', type=str, default='/tmp/uvicorn.pid',
-                                 help='File containing the process ID')
+                               help='File containing the process ID')
     
     # Start server command
     start_parser = server_subparsers.add_parser('start', help='Start the demo-server')
@@ -110,7 +110,7 @@ def is_process_running(pid: int) -> bool:
 
 
 def handle_test_log_command(args):
-    print(f"Running upload-log with settings:")
+    print(f"Running upload-run with settings:")
     print(f"Run directory: {args.run_dir}")
     print(f"API key: {'*' * len(args.api_key) if args.api_key else 'None'}")
     print(f"Upload URL: {args.upload_url}")
@@ -120,8 +120,8 @@ def handle_test_log_command(args):
     os.environ["SH_UPLOAD_URL"] = args.upload_url
     os.environ["SH_UPLOAD_PORT"] = str(args.upload_port)
     
-    from . import upload_logs
-    upload_logs(args.run_dir, args.api_key, args.upload_url, args.upload_port)
+    from . import upload_run
+    upload_run(args.run_dir, args.api_key, args.upload_url, args.upload_port)
 
 
 def start_server(args):
@@ -199,18 +199,15 @@ def main():
             sys.exit(0)
         
     args, train_args = parser.parse_known_args()
-    print(args)
-
-    if args.run_name is None:
-        args.run_name = datetime.now().strftime("unnamed-model-%Y-%m-%d_%H-%M-%S")
 
     os.environ["SH_PROJECT_NAME"] = args.project_name
     os.environ["SH_EXPERIMENT_NAME"] = args.experiment_name
-    os.environ["SH_RUN_NAME"] = args.run_name
+    if args.run_name is not None:
+        os.environ["SH_RUN_NAME"] = args.run_name
 
     if args.command == 'train':
         handle_train_command(train_args)
-    elif args.command == 'upload-log':
+    elif args.command == 'upload-run':
         handle_test_log_command(args)
     elif args.command == 'server':
         if args.server_command == 'start':

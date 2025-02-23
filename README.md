@@ -1,14 +1,24 @@
 # Software Hut Logger
 
-A package containing the logger demo for Software Hut using Hugging Face 🤗 Transformers Trainer.
+A package containing the logger demo for Software Hut using Hugging Face 🤗 Transformers Trainer. 
 
-`NOTE:` This is intended to be used with linux systems. If you are using Windows, you should use WSL2 for everything related to this package.
+**Important Notes:**
+- If you find anything is broken or confusing, please open an issue so that all teams can benefit from any explanations and fixes.
+- This module was developed on linux and is untested on Windows. I would recommend using WSL2 if you don't have a linux machine available but Windows might work. I won't be able to support Windows specific issues.
+- You won't need to run the training script but if you **really** want to, linux/WSL2 and CUDA>=12.1 on an NVIDIA GPU are required.
 
 ## Index
 - **[Installation & Setup](#2-installation--setup)**: Instructions for setting up the environment.
 - **[Usage](#3-usage)**: How to use the software after installation.
 - **[Commands](#31-commands)**: List of available commands and their descriptions.
 - **[Metadata File Contents](#4-metadata-file-contents)**: Details about the contents of the metadata file.
+
+## TODO
+- [ ] Finish documentation
+- [ ] Add system monitoring
+- [ ] Fix run-dir argument not being passed to logger
+- [ ] Add more comprehensive log example from long training run
+- [ ] Add project, experiment and run name to metadata file
 
 ## 1. Installation & Setup
 
@@ -141,18 +151,18 @@ shl server stop
 
 </details>
 
-#### 2.1.2 `upload-log`
+#### 2.1.2 `upload-run`
 
 Uploads a log file to the specified endpoint.
 
 ```bash
-shl upload-log [--run-dir <run-dir>] [--api-key <api-key>] [--upload-url <upload-url>] [--upload-port <upload-port>]
+shl upload-run [--run-dir <run-dir>] [--api-key <api-key>] [--upload-url <upload-url>] [--upload-port <upload-port>]
 ```
 
 Minimal Example:
 ```bash
 # Uploads example_log to the demo-server at http://0.0.0.0:8000
-shl upload-log
+shl upload-run
 ```
 
 <details>

@@ -6,11 +6,11 @@ import torch
 from transformers import TrainerCallback
 import json
 
-from software_hut_logger.utils import upload_logs
+from software_hut_logger.utils import upload_run
 
-
+logging.basicConfig()
 logger = logging.getLogger(__name__)
-logger.setLevel(os.environ.get("SH_LOG_LEVEL", "WARNING"))
+logger.setLevel(os.environ.get("SH_LOGGING_LEVEL", "WARNING"))
 
 
 RUNS_BASE_DIR = Path.cwd() / Path("runs")
@@ -41,6 +41,7 @@ class SoftwareHutLogger(TrainerCallback):
         
         model_name = model.name_or_path if model else "unnamed-model"
         if not (_run_name := os.environ.get("SH_RUN_NAME")):
+            logger.debug("Setting run name to as SH_RUN_NAME environment variable is not set")
             _run_name = f"{model_name}-{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
         self._run_name = Path(_run_name)
         self._run_dir = RUNS_BASE_DIR / self._project_name / self._experiment_name / self._run_name
@@ -101,6 +102,6 @@ class SoftwareHutLogger(TrainerCallback):
                 json.dump(run_metadata, f, indent=4)
                 f.truncate()
 
-            upload_logs(self._run_dir)
+            upload_run(self._run_dir)
     
 

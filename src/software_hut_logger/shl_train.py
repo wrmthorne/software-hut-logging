@@ -1,6 +1,7 @@
 from datasets import load_dataset
 import evaluate
 import torch
+import psutil
 from transformers import (
     AutoTokenizer,
     AutoModelForSeq2SeqLM,
@@ -11,6 +12,9 @@ from transformers import (
 )
 
 from software_hut_logger import SoftwareHutLogger, ScriptArguments
+
+
+DATASETS_NUM_PROC = psutil.cpu_count(logical=False)
 
 
 def compute_metrics_factory(tokenizer):
@@ -32,7 +36,7 @@ def tokenize(batch, tokenizer, max_length=512):
         truncation=True,
         max_length=max_length,
         return_attention_mask=True,
-        text_target=[task_prefix + label for label in batch["labels"]] if "labels" in batch else None
+        text_target=batch["labels"] if "labels" in batch else None
     )
     return tokenized_batch
 
@@ -51,16 +55,18 @@ def tokenize(batch, tokenizer, max_length=512):
     return model_inputs
 
 
-def prepare_wmt14_en_de_datasets(tokenizer, num_train_samples=5000, num_test_samples=100, seed=42, max_length=512):
+def prepare_wmt14_en_de_datasets(tokenizer, num_train_samples=-1, num_test_samples=-1, seed=42, max_length=512):
     dataset = load_dataset("wmt14", "de-en")
     
-    dataset['train'] = dataset['train'].shuffle(seed=seed).select(range(num_train_samples))
-    dataset['validation'] = dataset['validation'].shuffle(seed=seed).select(range(num_test_samples))
+    dataset['train'] = dataset['train'].shuffle(seed=seed).select(range(num_train_samples)) \
+        if num_train_samples != -1 else dataset['train']
+    dataset['validation'] = dataset['validation'].shuffle(seed=seed).select(range(num_test_samples)) \
+        if num_test_samples != -1 else dataset['validation']
     
     dataset = dataset.map(
         lambda x: {"text": x["translation"]["en"], "labels": x["translation"]["de"]},
         desc="Converting to text-labels format",
-        num_proc=4,
+        num_proc=DATASETS_NUM_PROC,
     ).remove_columns(["translation"])
     
     print("Initial dataset:", dataset)
@@ -74,7 +80,7 @@ def prepare_wmt14_en_de_datasets(tokenizer, num_train_samples=5000, num_test_sam
         ),
         batched=True,
         batch_size=200,
-        num_proc=4,
+        num_proc=DATASETS_NUM_PROC,
     )
     return dataset
 
