@@ -16,7 +16,6 @@ A package containing the logger demo for Software Hut using Hugging Face 🤗 Tr
 ## TODO
 - [ ] Finish documentation
 - [ ] Add system monitoring
-- [ ] Fix run-dir argument not being passed to logger
 - [ ] Add more comprehensive log example from long training run
 - [ ] Add project, experiment and run name to metadata file
 
@@ -199,7 +198,46 @@ shl upload-run
 </details>
 
 
-#### 2.1.3 `train`
+#### 2.1.3 `build-dataset-example`
+
+Builds an example dataset from the English-German portion of the WMT14 dataset. By default, a jsonl that is 1.44GB will be created. If you want something smaller to work with, you can specify a number of samples to save (try ~1000-10,000).
+
+```bash
+shl build-dataset-example [--save-dir <save-dir>] [--num-samples <num-samples>]
+```
+
+Minimal Example:
+```bash
+shl build-dataset-example
+```
+
+<details>
+<summary><b>EXPAND:</b> Argument Descriptions</summary>
+
+<table>
+    <tr>
+        <td>Argument</td>
+        <td>Description</td>
+        <td>Default</td>
+    </tr>
+    <tr>
+        <td>--save-dir</td>
+        <td>Path to save the example dataset</td>
+        <td>example_dataset</td>
+    </tr>
+    <tr>
+        <td>--num-samples</td>
+        <td>Number of samples to save</td>
+        <td>-1</td>
+    </tr>
+</table>
+
+
+</details>
+
+
+
+#### 2.1.4 `train`
 
 🚧 I'll add details here if you find you need to run the training script. 🚧
 

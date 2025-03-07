@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Misc. dirs
+uploads/
+wandb/
+runs/
+outputs/
+example_dataset/

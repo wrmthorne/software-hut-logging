@@ -61,7 +61,7 @@ async def upload_zip(
             "message": "File uploaded successfully",
             "project_name": project_name,
             "experiment_name": experiment_name,
-            "saved_to": save_path
+            "saved_to": str(save_path)
         }
     
     except Exception as e:
@@ -71,22 +71,3 @@ async def upload_zip(
         )
     finally:
         uploaded_run_file.file.close()
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--host", default="0.0.0.0", help="Host to bind the server to")
-    parser.add_argument("--port", type=int, default=8000, help="Port to bind the server to")
-    parser.add_argument("--workers", type=int, default=1, help="Number of worker processes")
-    parser.add_argument("--daemon", "-d", action="store_true", help="Run server in background mode")
-    parser.add_argument("--pid-file", default="uvicorn.pid", help="File to store the process ID")
-    args = parser.parse_args()
-
-    uvicorn.run(
-        app,
-        host=args.host,
-        port=args.port,
-        workers=args.workers,
-        daemonize=args.daemon,
-        pid_file=args.pid_file
-    )

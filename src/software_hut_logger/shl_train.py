@@ -29,29 +29,24 @@ def compute_metrics_factory(tokenizer):
 
 def tokenize(batch, tokenizer, max_length=512):
     task_prefix = "Translate English to German: "
-    tokenized_batch = tokenizer(
-        [task_prefix + example for example in batch["text"]],
-        return_tensors=None,
-        padding=False,
-        truncation=True,
-        max_length=max_length,
-        return_attention_mask=True,
-        text_target=batch["labels"] if "labels" in batch else None
-    )
-    return tokenized_batch
-
-
-def tokenize(batch, tokenizer, max_length=512):
-    task_prefix = "Translate English to German: "
-
+    # Tokenize inputs
     model_inputs = tokenizer(
         [task_prefix + example for example in batch["text"]],
         max_length=max_length,
+        padding=False,
         truncation=True,
-        padding="max_length",
-        text_target=[task_prefix + label for label in batch["labels"]] if "labels" in batch else None,
-        return_attention_mask=True
+        return_attention_mask=True,
     )
+    
+    # Tokenize labels separately
+    labels = tokenizer(
+        batch["labels"],
+        max_length=max_length,
+        padding=False,
+        truncation=True,
+    )
+    
+    model_inputs["labels"] = labels["input_ids"]
     return model_inputs
 
 

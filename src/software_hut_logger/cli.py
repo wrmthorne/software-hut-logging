@@ -14,6 +14,13 @@ def create_parser():
     parser = argparse.ArgumentParser(description='Software Hut Logger CLI')
     subparsers = parser.add_subparsers(dest='command', required=True)
 
+    # dataset command
+    dataset_parser = subparsers.add_parser('build-example-dataset', help='Build example dataset')
+    dataset_parser.add_argument('--save_dir', '--save_dir', type=str, default='example_dataset',
+                                help='Path to save the example dataset')
+    dataset_parser.add_argument('--num_samples', '--num_samples', type=int, default=-1,
+                                help='Number of samples to save')
+
     # upload-run command
     upload_run_parser = subparsers.add_parser('upload-run', help='Upload run to the server')
     upload_run_parser.add_argument('--run-dir', '--run_dir', dest='run_dir', type=str, default='example_run',
@@ -61,7 +68,7 @@ def create_parser():
     return parser
 
 
-def handle_train_command(args):
+def handle_train_command(train_args):
     accelerate_config_path = Path(__file__).parent / "accelerate_config.yml"
     train_script_path = Path(__file__).parent / "shl_train.py"
     cmd = [
@@ -71,7 +78,8 @@ def handle_train_command(args):
         str(accelerate_config_path),
         str(train_script_path),
     ]
-    cmd.extend(args)
+    
+    cmd.extend(train_args)
     
     try:
         subprocess.run(cmd)
@@ -79,6 +87,15 @@ def handle_train_command(args):
         print(f"software-hut-logger must be installed with train dependency group to use the train command")
         print(f"pip install software-hut-logger[train]")
         sys.exit(1)
+
+
+def handle_build_example_dataset_command(args):
+    dataset_script_path = Path(__file__).parent / "shl_dataset.py"
+    cmd = [
+        "python3",
+        str(dataset_script_path),
+    ]
+    subprocess.run(cmd)
 
 
 def read_pid_file(pid_file: str) -> Optional[int]:
@@ -202,11 +219,17 @@ def main():
 
     os.environ["SH_PROJECT_NAME"] = args.project_name
     os.environ["SH_EXPERIMENT_NAME"] = args.experiment_name
-    if args.run_name is not None:
-        os.environ["SH_RUN_NAME"] = args.run_name
+    if "--run-name" in train_args:
+        os.environ["SH_RUN_NAME"] = train_args[train_args.index("--run-name") + 1]
+    elif "--run_name" in train_args:
+        os.environ["SH_RUN_NAME"] = train_args[train_args.index("--run_name") + 1]
+    else:
+        os.environ["SH_RUN_NAME"] = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     if args.command == 'train':
         handle_train_command(train_args)
+    elif args.command == 'build-example-dataset':
+        handle_build_example_dataset_command(args)
     elif args.command == 'upload-run':
         handle_test_log_command(args)
     elif args.command == 'server':
