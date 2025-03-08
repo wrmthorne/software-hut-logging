@@ -1,6 +1,6 @@
 [project]
 name = "software-hut-logger"
-version = "0.2.0"
+version = "0.2.1"
 description = "A package containing the logger demo for Software Hut using Hugging Face 🤗 Transformers Trainer."
 readme = "README.md"
 authors = [
