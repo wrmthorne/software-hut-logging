@@ -21,9 +21,18 @@ def compute_metrics_factory(tokenizer):
     metrics = evaluate.combine(["sacrebleu", "rouge", "meteor"], force_prefix=True)
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
-        detokenized_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
-        detokenized_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
-        return metrics.compute(predictions=detokenized_preds, references=detokenized_labels)
+        labels = [[int(x) for x in label if x != -100] for label in labels]
+        
+        try:
+            detokenized_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
+            detokenized_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+            return metrics.compute(predictions=detokenized_preds, references=detokenized_labels)
+        except Exception as e:
+            print(f"Error in compute_metrics: {str(e)}")
+            print(f"Sample label: {labels[0] if labels else 'no labels'}")
+            print(f"Sample pred: {preds[0] if preds else 'no preds'}")
+            raise e
+            
     return compute_metrics
 
 
@@ -39,14 +48,19 @@ def tokenize(batch, tokenizer, max_length=512):
     )
     
     # Tokenize labels separately
-    labels = tokenizer(
-        batch["labels"],
-        max_length=max_length,
-        padding=False,
-        truncation=True,
-    )
+    with tokenizer.as_target_tokenizer():
+        labels = tokenizer(
+            batch["labels"],
+            max_length=max_length,
+            padding=False,
+            truncation=True,
+        )
     
     model_inputs["labels"] = labels["input_ids"]
+    
+    # Ensure labels are integers
+    model_inputs["labels"] = [[int(x) for x in label] for label in model_inputs["labels"]]
+    
     return model_inputs
 
 
