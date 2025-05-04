@@ -58,7 +58,7 @@ def upload_run(
         logger.warning(f"Server at {upload_url}:{upload_port} is not running")
         return
     
-    zipped_path = Path("/tmp") / run_dir.name
+    zipped_path = Path("/tmp") / Path(run_dir).name
     zipped_file = zipped_path.with_suffix(".zip")
     shutil.make_archive(zipped_path, 'zip', run_dir)
 
