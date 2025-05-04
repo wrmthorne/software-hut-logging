@@ -38,13 +38,17 @@ class ServerArguments:
             "X-Run-Name": self.run_name
         }
 
-
-def upload_run(file_path: Path):
-    upload_url = os.environ.get("SH_UPLOAD_URL", "0.0.0.0")
-    upload_port = os.environ.get("SH_UPLOAD_PORT", 8000)
+def upload_run(
+        run_dir: os.PathLike,
+        api_key: str | None = None,
+        upload_url: str | None = None,
+        upload_port: int | None = None
+    ):
+    upload_url = upload_url or os.environ.get("SH_UPLOAD_URL", "0.0.0.0")
+    upload_port = upload_port or os.environ.get("SH_UPLOAD_PORT", 8000)
 
     headers = ServerArguments(
-        api_key=os.environ.get("SH_API_KEY"),
+        api_key=api_key or os.environ.get("SH_API_KEY"),
         project_name=os.environ.get("SH_PROJECT_NAME"),
         experiment_name=os.environ.get("SH_EXPERIMENT_NAME"),
         run_name=os.environ.get("SH_RUN_NAME")
@@ -54,11 +58,11 @@ def upload_run(file_path: Path):
         logger.warning(f"Server at {upload_url}:{upload_port} is not running")
         return
     
-    zipped_path = Path("/tmp") / file_path.name
+    zipped_path = Path("/tmp") / run_dir.name
     zipped_file = zipped_path.with_suffix(".zip")
-    shutil.make_archive(zipped_path, 'zip', file_path)
+    shutil.make_archive(zipped_path, 'zip', run_dir)
 
-    logger.debug(f"Uploading run {file_path} to {upload_url}:{upload_port}")
+    logger.debug(f"Uploading run {run_dir} to {upload_url}:{upload_port}")
     
     with open(zipped_file, 'rb') as f:
         files = {'uploaded_run_file': (str(zipped_file), f, 'application/zip')}

@@ -16,8 +16,6 @@ A package containing the logger demo for Software Hut using Hugging Face 🤗 Tr
 ## TODO
 - [ ] Finish documentation
 - [ ] Add system monitoring
-- [ ] Add more comprehensive log example from long training run
-- [ ] Add project, experiment and run name to metadata file
 
 ## 1. Installation & Setup
 
