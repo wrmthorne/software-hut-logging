@@ -196,17 +196,17 @@ shl upload-run
 </details>
 
 
-#### 2.1.3 `build-dataset-example`
+#### 2.1.3 `build-example-dataset`
 
 Builds an example dataset from the English-German portion of the WMT14 dataset. By default, a jsonl that is 1.44GB will be created. If you want something smaller to work with, you can specify a number of samples to save (try ~1000-10,000).
 
 ```bash
-shl build-dataset-example [--save-dir <save-dir>] [--num-samples <num-samples>]
+shl build-example-dataset [--save-dir <save-dir>] [--num-samples <num-samples>]
 ```
 
 Minimal Example:
 ```bash
-shl build-dataset-example
+shl build-example-dataset
 ```
 
 <details>
@@ -242,4 +242,7 @@ shl build-dataset-example
 
 ## 3. Metadata File Contents
 
-The metadata file contains all of the information about the run. 
+The metadata file contains all of the information about the run. Most importantly, every run will come with a `training_state` field which can either take `"failed"` or `"successful"`.
+
+Other paramters can be expected such as `model_name_or_path`
+
